@@ -13,7 +13,7 @@ const ResultsPage = () => {
     const fetchResults = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:5000/api/healthResults', {
+        const response = await axios.get('https://facevital-backend-1.onrender.com/api/healthResults', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setResults(response.data.results);
@@ -38,7 +38,7 @@ const ResultsPage = () => {
     if (window.confirm('Are you sure you want to delete this result?')) {
       try {
         const token = localStorage.getItem('authToken');
-        await axios.delete(`http://localhost:5000/api/healthResults/${resultId}`, {
+        await axios.delete(`https://facevital-backend-1.onrender.com/api/healthResults/${resultId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setResults(results.filter(result => result.id !== resultId));

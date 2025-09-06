@@ -28,7 +28,7 @@ const ForgotPassword = () => {
         setMessage('');
 
         try {
-            const response = await Axios.post('http://localhost:5000/api/auth/forgot-password', {
+            const response = await Axios.post('https://facevital-backend-1.onrender.com/api/auth/forgot-password', {
                 email: email
             });
             

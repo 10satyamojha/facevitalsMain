@@ -35,7 +35,7 @@ const EmailVerification = () => {
             setStatus('verifying');
             setMessage('Verifying your email...');
 
-            const response = await Axios.get(`http://localhost:5000/api/auth/verify-email?token=${token}`);
+            const response = await Axios.get(`https://facevital-backend-1.onrender.com/api/auth/verify-email?token=${token}`);
             
             setStatus('success');
             setMessage(response.data.message || 'Email verified successfully!');

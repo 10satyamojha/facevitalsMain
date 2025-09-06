@@ -25,7 +25,7 @@ const Register = () => {
         
         try {
             // Send lowercase keys as expected by backend
-            const response = await Axios.post('http://localhost:5000/api/auth/register', {
+            const response = await Axios.post('https://facevital-backend-1.onrender.com/api/auth/register', {
                 email: email,        // lowercase 'email'
                 userName: userName,  // lowercase 'userName'
                 password: password   // lowercase 'password'

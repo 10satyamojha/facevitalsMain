@@ -18,7 +18,7 @@ const HealthVitalsDashboard = () => {
   const fetchProfileData = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/profile/getProfile', {
+      const response = await fetch('https://facevital-backend-1.onrender.com/api/profile/getProfile', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ const HealthVitalsDashboard = () => {
   const fetchVitalsData = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/vitals/latest', {
+      const response = await fetch('https://facevital-backend-1.onrender.com/api/vitals/latest', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ const HealthVitalsDashboard = () => {
   const fetchActivityData = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/activity/recent', {
+      const response = await fetch('https://facevital-backend-1.onrender.com/api/activity/recent', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ const HealthVitalsDashboard = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/notifications', {
+      const response = await fetch('https://facevital-backend-1.onrender.com/api/notifications', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ const HealthVitalsDashboard = () => {
   const fetchApiUsage = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://localhost:5000/api/usage-stats', {
+      const response = await fetch('https://facevital-backend-1.onrender.com/api/usage-stats', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

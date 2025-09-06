@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ProfileForm.css';
+import './profileform.css';
 import '../../App.css'
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios'
@@ -40,7 +40,7 @@ const ProfileForm = () => {
         try {
             const token = localStorage.getItem('authToken');
             const response = await Axios.get(
-                'http://localhost:5000/api/profile/check',
+                'https://facevital-backend-1.onrender.com/api/profile/check',
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -118,7 +118,7 @@ const ProfileForm = () => {
         try {
             const token = localStorage.getItem('authToken');
             const response = await Axios.post(
-                'http://localhost:5000/api/profile/create-update',
+                'https://facevital-backend-1.onrender.com/api/profile/create-update',
                 formData,
                 {
                     headers: {

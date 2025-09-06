@@ -28,7 +28,7 @@ const Login = () => {
     setIsLoading(true);
     setLoginStatus('');
 
-    Axios.post('http://localhost:5000/api/auth/login', {
+    Axios.post('https://facevital-backend-1.onrender.com/api/auth/login', {
       LoginUserName: loginUserName,
       LoginPassword: loginPassword
     })
