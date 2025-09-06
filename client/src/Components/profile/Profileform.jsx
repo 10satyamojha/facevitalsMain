@@ -40,7 +40,7 @@ const ProfileForm = () => {
         try {
             const token = localStorage.getItem('authToken');
             const response = await Axios.get(
-                'https://facevital-backend-2.onrender.com/api/profile/check',
+                'https://facevital-backend-3.onrender.com/api/profile/check',
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -118,7 +118,7 @@ const ProfileForm = () => {
         try {
             const token = localStorage.getItem('authToken');
             const response = await Axios.post(
-                'https://facevital-backend-2.onrender.com/api/profile/create-update',
+                'https://facevital-backend-3.onrender.com/api/profile/create-update',
                 formData,
                 {
                     headers: {
