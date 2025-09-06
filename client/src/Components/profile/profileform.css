@@ -1,0 +1,288 @@
+/* ProfileForm.css - Same styling as Login/Register for consistency */
+
+.profilePage {
+    height: 100vh;
+    width: 100%;
+}
+
+.profilePage .container {
+    height: 100vh;
+    width: 100%;
+}
+
+.profilePage .container .videoDiv {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.profilePage .container .videoDiv video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.profilePage .container .videoDiv::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(45, 95, 160, 0.8), rgba(33, 150, 243, 0.6));
+    z-index: 1;
+}
+
+.profilePage .container .videoDiv .textDiv {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profilePage .container .videoDiv .textDiv .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.profilePage .container .videoDiv .textDiv p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.profilePage .container .videoDiv .footerDiv {
+    position: relative;
+    z-index: 2;
+    color: white;
+    gap: 1rem;
+    align-items: center;
+}
+
+.profilePage .container .videoDiv .footerDiv .text {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.profilePage .container .videoDiv .footerDiv .btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.profilePage .container .videoDiv .footerDiv .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.profilePage .container .formDiv {
+    flex: 1;
+    background: white;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    max-width: 450px;
+    width: 100%;
+}
+
+.profilePage .container .formDiv .headerDiv {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profilePage .container .formDiv .headerDiv img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.profilePage .container .formDiv .headerDiv h3 {
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.profilePage .container .formDiv .form {
+    gap: 1.5rem;
+}
+
+.profilePage .container .formDiv .form .inputDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profilePage .container .formDiv .form .inputDiv label {
+    color: #555;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.profilePage .container .formDiv .form .inputDiv .input {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.profilePage .container .formDiv .form .inputDiv .input:focus-within {
+    border-color: #2d5fa0;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(45, 95, 160, 0.1);
+}
+
+.profilePage .container .formDiv .form .inputDiv .input .icon {
+    color: #666;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.profilePage .container .formDiv .form .inputDiv .input input,
+.profilePage .container .formDiv .form .inputDiv .input select {
+    background: transparent;
+    border: none;
+    outline: none;
+    flex: 1;
+    color: #333;
+    font-size: 1rem;
+}
+
+.profilePage .container .formDiv .form .inputDiv .input input::placeholder {
+    color: #999;
+}
+
+.profilePage .container .formDiv .form .inputDiv .input input:disabled,
+.profilePage .container .formDiv .form .inputDiv .input select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profilePage .container .formDiv .form .btn {
+    background: linear-gradient(135deg, #2d5fa0, #1976d2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(45, 95, 160, 0.3);
+}
+
+.profilePage .container .formDiv .form .btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45, 95, 160, 0.4);
+}
+
+.profilePage .container .formDiv .form .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(45, 95, 160, 0.2);
+}
+
+.profilePage .container .formDiv .form .btn .icon {
+    font-size: 1.2rem;
+}
+
+/* Message styles */
+.message {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.showMessage {
+    opacity: 1;
+    visibility: visible;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.showMessage.success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+/* Health tips styling */
+.health-tip {
+    background: #f0f5ff;
+    border: 1px solid #adc6ff;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.health-tip .icon {
+    color: #2f54eb;
+    font-size: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profilePage .container {
+        flex-direction: column;
+    }
+    
+    .profilePage .container .videoDiv {
+        height: 40vh;
+        min-height: 300px;
+    }
+    
+    .profilePage .container .formDiv {
+        flex: 1;
+        max-width: none;
+        padding: 1.5rem;
+    }
+    
+    .profilePage .container .formDiv .headerDiv .title {
+        font-size: 2rem;
+    }
+    
+    .profilePage .container .formDiv .form {
+        gap: 1rem;
+    }
+}

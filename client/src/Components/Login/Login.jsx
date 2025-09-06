@@ -9,45 +9,77 @@ import { FaUserShield } from 'react-icons/fa'
 import { BsFillShieldLockFill } from 'react-icons/bs'
 import { AiOutlineSwapRight } from 'react-icons/ai'
 
-
-
 const Login = () => {
-    const [loginUserName, setLoginUserName] = useState('');
-    const [loginPassword, setLoginPassword] = useState('');
-    const navigateTo = useNavigate();
-    const [loginStatus, setLoginStatus] = useState('');
-    const [statusHolder, setStatusHolder] = useState('message');
+  const [loginUserName, setLoginUserName] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const navigateTo = useNavigate();
+  const [loginStatus, setLoginStatus] = useState('');
+  const [statusHolder, setStatusHolder] = useState('message');
+  const [isLoading, setIsLoading] = useState(false);
 
-    const loginUser = (e) => {
-        e.preventDefault();
-        Axios.post('http://localhost:3002/login', {
-            LoginUserName: loginUserName,
-            LoginPassword: loginPassword
-        }).then((response) => {
-            console.log();
-            if (response.data.message || loginUserName == '' || loginPassword ==  '') {
-                navigateTo('/') 
-                setLoginStatus(`Credentials Don't Exist!`)
-            }
-            else {
-                navigateTo('/dashboard')
-            }
-        })
+  const loginUser = (e) => {
+    e.preventDefault();
+
+    if (loginUserName.trim() === '' || loginPassword.trim() === '') {
+      setLoginStatus('Please enter both username and password!');
+      return;
     }
 
-    useEffect(() => {
-        if (loginStatus !== '') {
-            setStatusHolder('showMessage') 
-            setTimeout(() => {
-                setStatusHolder('message')
-            }, 2000);
+    setIsLoading(true);
+    setLoginStatus('');
+
+    Axios.post('http://localhost:5000/api/auth/login', {
+      LoginUserName: loginUserName,
+      LoginPassword: loginPassword
+    })
+      .then((response) => {
+        console.log('Login response:', response.data);
+
+        if (response.data.success || response.data.token) {
+          if (response.data.token) {
+            localStorage.setItem('authToken', response.data.token);  // Store token as 'authToken'
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            console.log("token", response.data.token);
+          }
+
+          setLoginStatus('Login successful! Redirecting...');
+          setTimeout(() => {
+            navigateTo('/dashboard');
+          }, 1500);
+        } else {
+          setLoginStatus('Login failed. Please try again.');
         }
-    }, [loginStatus])
+      })
+      .catch((error) => {
+        console.error('Login error:', error);
+        if (error.response) {
+          const errorMessage = error.response.data.message || 'Login failed';
+          setLoginStatus(errorMessage);
+        } else if (error.request) {
+          setLoginStatus('Unable to connect to server. Please try again.');
+        } else {
+          setLoginStatus('An error occurred. Please try again.');
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
-    const onSubmit = () => {
-        setLoginUserName('')
-        setLoginPassword('')
+  useEffect(() => {
+    if (loginStatus !== '') {
+      setStatusHolder('showMessage');
+      const timer = setTimeout(() => {
+        setStatusHolder('message');
+      }, 4000);
+      return () => clearTimeout(timer);
     }
+  }, [loginStatus]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    loginUser(e);
+  }
 
     return (
         <div className="loginPage flex">
@@ -57,7 +89,7 @@ const Login = () => {
                     <video src={video} autoPlay muted loop></video>
 
                     <div className="textDiv">
-                        <h2 className="title">Create And Sell Extraordinary Products</h2>
+                        <h2 className="title">Health Vitals</h2>
                         <p>Adopt the peace of nature!</p>
                     </div>
 
@@ -75,15 +107,21 @@ const Login = () => {
                         <h3>Welcome Back!</h3>
                     </div>
 
-                    <form action="" className="form grid" onSubmit={onSubmit}>
+                    <form className="form grid" onSubmit={onSubmit}>
                         <span className={statusHolder}>{loginStatus}</span>
 
                         <div className="inputDiv">
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="username">Username or Email</label>
                             <div className="input flex">
                                 <FaUserShield className="icon" />
-                                <input type="text" id='username' placeholder='Enter Username'
-                                    onChange={(event) => setLoginUserName(event.target.value)} />
+                                <input 
+                                    type="text" 
+                                    id='username' 
+                                    placeholder='Enter Username or Email'
+                                    value={loginUserName}
+                                    onChange={(event) => setLoginUserName(event.target.value)}
+                                    disabled={isLoading}
+                                />
                             </div>
                         </div>
 
@@ -91,18 +129,28 @@ const Login = () => {
                             <label htmlFor="password">Password</label>
                             <div className="input flex">
                                 <BsFillShieldLockFill className="icon" />
-                                <input type="password" id='password' placeholder='Enter Password'
-                                    onChange={(event) => setLoginPassword(event.target.value)} />
+                                <input 
+                                    type="password" 
+                                    id='password' 
+                                    placeholder='Enter Password'
+                                    value={loginPassword}
+                                    onChange={(event) => setLoginPassword(event.target.value)}
+                                    disabled={isLoading}
+                                />
                             </div>
                         </div>
 
-                        <button type='submit' className='btn flex' onClick={loginUser}>
-                            <span>Login</span>
-                            <AiOutlineSwapRight className="icon" />
+                        <button 
+                            type='submit' 
+                            className='btn flex' 
+                            disabled={isLoading}
+                        >
+                            <span>{isLoading ? 'Logging in...' : 'Login'}</span>
+                            {!isLoading && <AiOutlineSwapRight className="icon" />}
                         </button>
 
                         <span className="forgotPassword">
-                            Forgot your password? <a href="">Click Here</a>
+                            Forgot your password? <Link to="/forgot-password">Click Here</Link>
                         </span>
 
                     </form>

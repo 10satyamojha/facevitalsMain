@@ -1,151 +1,207 @@
-/* Colors adn Styles (Default) */
-:root {
-  --PrimaryColor: hsl(94, 59%, 35%);
-  --HoverColor: #bdf094;
-  --paleGreen: hsl(96, 75%, 89%);
-  --whiteColor: hsl(0, 0%, 100%);
-  --blackColor: hsl(0, 0%, 18%);
-  --textColor: hsl(240, 1%, 48%);
-  --bgColor: hsl(220, 10%, 94%);
-  --greyText: rgb(190, 190, 190);
-  --inputColor: hsl(330, 12%, 97%);
-  --itemCardColor: hsl(120, 5%, 88%);
-  --itemCardHover: hsl(120, 27%, 87%);
-  /* Font ang Typography */
-  --biggestFontSize: 2.5rem;
-  --h1FontSize: 1.5rem;
-  --h2FontSize: 1.25rem;
-  --h3FontSize: 1rem;
-  --normalFontSize: .938rem;
-  --smallFontSize: .813rem;
-  --smallestFontSize: .75rem;
+import React, { useState, useEffect } from 'react'
+
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  BarChart, Bar, PieChart, Pie, Cell 
+} from 'recharts'
+import { FaArrowUp, FaArrowDown, FaEquals } from 'react-icons/fa'
+
+const Analytics = () => {
+  const [vitalHistory, setVitalHistory] = useState([])
+  const [timeRange, setTimeRange] = useState('7days')
+  const [selectedVital, setSelectedVital] = useState('heartRate')
+
+  useEffect(() => {
+    const history = localStorage.getItem('vitalHistory')
+    if (history) {
+      setVitalHistory(JSON.parse(history))
+    }
+  }, [])
+
+  const chartData = vitalHistory.slice(0, 10).reverse().map((vital, index) => ({
+    name: `Day ${index + 1}`,
+    heartRate: parseInt(vital.heartRate) || 0,
+    systolic: parseInt(vital.bloodPressureSystolic) || 0,
+    diastolic: parseInt(vital.bloodPressureDiastolic) || 0,
+    temperature: parseFloat(vital.temperature) || 0,
+    oxygenSaturation: parseInt(vital.oxygenSaturation) || 0,
+    weight: parseFloat(vital.weight) || 0
+  }))
+
+  const getTrend = (data, key) => {
+    if (data.length < 2) return { trend: 'stable', percentage: 0 }
+    
+    const latest = data[data.length - 1][key]
+    const previous = data[data.length - 2][key]
+    
+    if (latest > previous) return { trend: 'up', percentage: ((latest - previous) / previous * 100).toFixed(1) }
+    if (latest < previous) return { trend: 'down', percentage: ((previous - latest) / previous * 100).toFixed(1) }
+    return { trend: 'stable', percentage: 0 }
+  }
+
+  const heartRateTrend = getTrend(chartData, 'heartRate')
+  const weightTrend = getTrend(chartData, 'weight')
+  const tempTrend = getTrend(chartData, 'temperature')
+
+  const healthScoreData = [
+    { name: 'Excellent', value: 25, color: '#27ae60' },
+    { name: 'Good', value: 45, color: '#3498db' },
+    { name: 'Average', value: 20, color: '#f39c12' },
+    { name: 'Poor', value: 10, color: '#e74c3c' }
+  ]
+
+  return (
+    <div className="analytics">
+      <div className="analyticsHeader">
+        <h1>Health Analytics</h1>
+        <div className="controls">
+          <select 
+            value={timeRange} 
+            onChange={(e) => setTimeRange(e.target.value)}
+            className="timeRangeSelect"
+          >
+            <option value="7days">Last 7 Days</option>
+            <option value="30days">Last 30 Days</option>
+            <option value="90days">Last 90 Days</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="trendsGrid">
+        <div className="trendCard">
+          <div className="trendHeader">
+            <h3>Heart Rate Trend</h3>
+            <div className={`trendIndicator ${heartRateTrend.trend}`}>
+              {heartRateTrend.trend === 'up' && <FaArrowUp />}
+              {heartRateTrend.trend === 'down' && <FaArrowDown />}
+              {heartRateTrend.trend === 'stable' && <FaEquals />}
+              <span>{heartRateTrend.percentage}%</span>
+            </div>
+          </div>
+          <p className="currentValue">
+            {chartData.length > 0 ? chartData[chartData.length - 1].heartRate : '--'} BPM
+          </p>
+        </div>
+
+        <div className="trendCard">
+          <div className="trendHeader">
+            <h3>Weight Trend</h3>
+            <div className={`trendIndicator ${weightTrend.trend}`}>
+              {weightTrend.trend === 'up' && <FaArrowUp />}
+              {weightTrend.trend === 'down' && <FaArrowDown />}
+              {weightTrend.trend === 'stable' && <FaEquals />}
+              <span>{weightTrend.percentage}%</span>
+            </div>
+          </div>
+          <p className="currentValue">
+            {chartData.length > 0 ? chartData[chartData.length - 1].weight : '--'} kg
+          </p>
+        </div>
+
+        <div className="trendCard">
+          <div className="trendHeader">
+            <h3>Temperature Trend</h3>
+            <div className={`trendIndicator ${tempTrend.trend}`}>
+              {tempTrend.trend === 'up' && <FaArrowUp />}
+              {tempTrend.trend === 'down' && <FaArrowDown />}
+              {tempTrend.trend === 'stable' && <FaEquals />}
+              <span>{tempTrend.percentage}%</span>
+            </div>
+          </div>
+          <p className="currentValue">
+            {chartData.length > 0 ? chartData[chartData.length - 1].temperature : '--'}°C
+          </p>
+        </div>
+      </div>
+
+      <div className="chartsSection">
+        <div className="chartContainer">
+          <h3>Vital Signs Over Time</h3>
+          <div className="chartControls">
+            <select 
+              value={selectedVital} 
+              onChange={(e) => setSelectedVital(e.target.value)}
+            >
+              <option value="heartRate">Heart Rate</option>
+              <option value="systolic">Blood Pressure (Systolic)</option>
+              <option value="temperature">Temperature</option>
+              <option value="weight">Weight</option>
+            </select>
+          </div>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Line 
+                type="monotone" 
+                dataKey={selectedVital} 
+                stroke="#3498db" 
+                strokeWidth={3}
+                dot={{ fill: '#3498db', strokeWidth: 2, r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chartContainer">
+          <h3>Health Score Distribution</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Pie
+                data={healthScoreData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                outerRadius={120}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {healthScoreData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="comparisonChart">
+        <h3>Weekly Comparison</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData.slice(-7)}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="heartRate" fill="#e74c3c" name="Heart Rate" />
+            <Bar dataKey="oxygenSaturation" fill="#27ae60" name="Oxygen Sat." />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="insightsSection">
+        <h3>Health Insights</h3>
+        <div className="insightsList">
+          <div className="insightItem positive">
+            <h4>Good Progress</h4>
+            <p>Your heart rate has been stable within the normal range for the past week.</p>
+          </div>
+          <div className="insightItem warning">
+            <h4>Monitor Weight</h4>
+            <p>Consider tracking your weight more consistently for better health monitoring.</p>
+          </div>
+          <div className="insightItem info">
+            <h4>Recommendation</h4>
+            <p>Continue monitoring your vitals daily for comprehensive health tracking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-.lisitingSection {
-  flex-basis: 70%;
-}
-.lisitingSection .heading {
-  width: 100%;
-  justify-content: space-between;
-}
-.lisitingSection .heading h1 {
-  font-size: var(--h2FontSize);
-  color: var(--blackColor);
-  font-weight: 700;
-}
-.lisitingSection .heading .btn {
-  border: 1px solid transparent;
-  font-weight: 500;
-}
-.lisitingSection .heading .btn:hover {
-  border: 1px solid var(--PrimaryColor);
-}
-.lisitingSection .secContainer {
-  width: 100%;
-  margin: 1rem 0;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.lisitingSection .secContainer .singleItem {
-  position: relative;
-  width: 150px;
-  height: 170px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 1rem;
-  border-radius: 10px;
-  background: var(--itemCardColor);
-}
-.lisitingSection .secContainer .singleItem:hover {
-  background: var(--itemCardHover);
-  box-shadow: 0 2px 2px var(--inputColor);
-}
-.lisitingSection .secContainer .singleItem img {
-  max-width: 100px;
-}
-.lisitingSection .secContainer .singleItem .icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: var(--PrimaryColor);
-}
-.lisitingSection .secContainer .singleItem h3 {
-  font-size: var(--h3FontSize);
-  color: var(--blackColor);
-  padding: 1rem 0;
-}
-.lisitingSection .sellers {
-  width: 100%;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
-}
-.lisitingSection .sellers .topSellers .heading,
-.lisitingSection .sellers .featuredSellers .heading {
-  padding: 1rem 0;
-}
-.lisitingSection .sellers .topSellers .heading .btn,
-.lisitingSection .sellers .featuredSellers .heading .btn {
-  padding: 0.5rem 1rem;
-}
-.lisitingSection .sellers .topSellers .card,
-.lisitingSection .sellers .featuredSellers .card {
-  padding: 1rem 1.5rem;
-  border-radius: 1rem;
-  background: var(--whiteColor);
-  gap: 1rem;
-  box-shadow: 0 2px 4px var(--inputColor);
-}
-.lisitingSection .sellers .topSellers .card .users,
-.lisitingSection .sellers .featuredSellers .card .users {
-  padding-right: 1rem;
-  border-right: 2px solid var(--greyText);
-}
-.lisitingSection .sellers .topSellers .card .users img,
-.lisitingSection .sellers .featuredSellers .card .users img {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border: 2px solid var(--inputColor);
-  transition: 0.5s ease;
-}
-.lisitingSection .sellers .topSellers .card .users img:hover,
-.lisitingSection .sellers .featuredSellers .card .users img:hover {
-  transform: translateY(-10px);
-}
-.lisitingSection .sellers .topSellers .card .cardText span,
-.lisitingSection .sellers .featuredSellers .card .cardText span {
-  color: var(--blackColor);
-  font-weight: 500;
-}
-.lisitingSection .sellers .topSellers .card .cardText span small,
-.lisitingSection .sellers .featuredSellers .card .cardText span small {
-  font-weight: 400;
-}
-.lisitingSection .sellers .topSellers .card .cardText span small .date,
-.lisitingSection .sellers .featuredSellers .card .cardText span small .date {
-  margin-left: 1rem;
-}
-
-@media screen and (max-width: 990px) {
-  .lisitingSection .sellers .card {
-    flex-direction: column;
-  }
-}
-@media screen and (max-width: 918px) {
-  .lisitingSection .singleItem {
-    width: 200px !important;
-  }
-}
-@media screen and (max-width: 490px) {
-  .lisitingSection .sellers {
-    flex-direction: column;
-  }
-  .lisitingSection .sellers .card {
-    flex-direction: row;
-  }
-}/*# sourceMappingURL=listing.css.map */
+export default Analytics
