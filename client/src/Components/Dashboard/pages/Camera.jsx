@@ -32,7 +32,7 @@ export default function CameraSection() {
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   // Backend server ka base URL
-  const API_BASE_URL = 'https://facevital-backend-1.onrender.com';
+  const API_BASE_URL = 'https://facevital-backend-2.onrender.com';
 
   // Helper function to get authentication headers
   const getAuthHeaders = () => {

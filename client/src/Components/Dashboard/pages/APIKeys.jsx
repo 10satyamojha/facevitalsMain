@@ -12,7 +12,7 @@ const APIKeys = () => {
   const [error, setError] = useState('');
 
   // API Configuration
-  const API_BASE_URL = 'https://facevital-backend-1.onrender.com/api/apikeys';
+  const API_BASE_URL = 'https://facevital-backend-2.onrender.com/api/apikeys';
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('authToken');

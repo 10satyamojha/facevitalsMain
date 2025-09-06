@@ -50,7 +50,7 @@ const ResetPassword = () => {
         setPasswordErrors([]);
 
         try {
-            const response = await Axios.post('https://facevital-backend-1.onrender.com/api/auth/reset-password', {
+            const response = await Axios.post('https://facevital-backend-2.onrender.com/api/auth/reset-password', {
                 token: token,
                 password: password
             });

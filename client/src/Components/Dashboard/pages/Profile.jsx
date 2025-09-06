@@ -50,7 +50,7 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.get('https://facevital-backend-1.onrender.com/api/profile/getProfile', {
+        const response = await axios.get('https://facevital-backend-2.onrender.com/api/profile/getProfile', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const Profile = () => {
       console.log('Sending update data:', updateData); // Debug log
 
       const response = await axios.post(
-        'https://facevital-backend-1.onrender.com/api/profile/createOrUpdateProfile',
+        'https://facevital-backend-2.onrender.com/api/profile/createOrUpdateProfile',
         updateData,
         {
           headers: {
