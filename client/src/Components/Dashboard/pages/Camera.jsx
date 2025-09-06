@@ -208,7 +208,7 @@ export default function CameraSection() {
       const formData = new FormData();
       formData.append('video', videoBlob, 'health-scan.webm');
       
-      const response = await axios.post('https://anurudh-268064419384.europe-west1.run.app/analyze', formData);
+      const response = await axios.post('https://anurudh-268064419384.asia-east1.run.app/analyze', formData);
       
       const prediction = response.data;
 
