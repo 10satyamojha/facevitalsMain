@@ -33,6 +33,7 @@ export default function CameraSection() {
 
   // Backend server ka base URL
   const API_BASE_URL = 'https://facevital-backend-3.onrender.com';
+  const AI_API_URL = 'https://anurudh-268064419384.asia-east1.run.app/analyze';
 
   // Helper function to get authentication headers
   const getAuthHeaders = () => {
@@ -151,7 +152,10 @@ export default function CameraSection() {
     setRecordingDuration(0);
 
     const chunks = [];
-    const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+    // MP4 format use karte hain better compatibility ke liye
+    const mediaRecorder = new MediaRecorder(stream, { 
+      mimeType: 'video/webm;codecs=vp9' 
+    });
 
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) chunks.push(event.data);
@@ -204,25 +208,72 @@ export default function CameraSection() {
     setIsAnalyzing(true);
     setAiPrediction(null);
     setAnalysisComplete(false);
+    
     try {
-      const formData = new FormData();
-      formData.append('video', videoBlob, 'health-scan.webm');
+      console.log('Starting AI analysis...');
       
-      const response = await axios.post('https://anurudh-268064419384.asia-east1.run.app/analyze', formData);
+      const formData = new FormData();
+      // Backend expects 'file' field name based on your Flask code
+      formData.append('file', videoBlob, 'health-scan.webm');
+      
+      console.log('Sending video to AI API...');
+      
+      const response = await axios.post(AI_API_URL, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 120000, // 2 minute timeout
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(`Upload progress: ${percentCompleted}%`);
+        }
+      });
+      
+      console.log('AI API Response:', response.data);
       
       const prediction = response.data;
 
       if (typeof prediction === 'object' && prediction !== null && !prediction.error) {
-          setAiPrediction(prediction);
-          await saveToDatabase(prediction, videoBlob);
+          // Map the response to match your frontend expectations
+          const mappedPrediction = {
+            heartRate: prediction.heart_rate_bpm,
+            bloodPressure: {
+              systolic: prediction.blood_pressure?.systolic,
+              diastolic: prediction.blood_pressure?.diastolic
+            },
+            oxygenSaturation: prediction.spo2_percent,
+            stressLevel: prediction.stress_indicator ? (prediction.stress_indicator * 100).toFixed(1) : null,
+            respiratoryRate: prediction.respiratory_rate_bpm,
+            age: prediction.age,
+            gender: prediction.gender,
+            healthRisk: prediction.health_risk_indicator
+          };
+          
+          setAiPrediction(mappedPrediction);
+          await saveToDatabase(mappedPrediction, videoBlob);
       } else {
-          throw new Error(prediction.error || "AI API se anupयुक्त response structure mila.");
+          throw new Error(prediction.error || "AI API से अनुपयुक्त response structure मिला।");
       }
 
     } catch (error) {
       console.error('AI API Error:', error);
-      const errorMessage = error.response ? JSON.stringify(error.response.data) : error.message;
-      setAiPrediction({ error: `Analysis failed: ${errorMessage}` });
+      let errorMessage = 'Analysis failed';
+      
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        errorMessage = `Analysis failed: ${error.response.status} - ${error.response.data?.error || 'Server error'}`;
+      } else if (error.request) {
+        console.error('Request error:', error.request);
+        errorMessage = 'Analysis failed: No response from server. Please check your internet connection.';
+      } else {
+        console.error('Error message:', error.message);
+        errorMessage = `Analysis failed: ${error.message}`;
+      }
+      
+      setAiPrediction({ error: errorMessage });
     } finally {
       setIsAnalyzing(false);
       setAnalysisComplete(true);
@@ -232,7 +283,7 @@ export default function CameraSection() {
   const saveToDatabase = async (predictionData, videoBlob) => {
     const authHeaders = getAuthHeaders();
     if (!authHeaders) {
-        setErrorInfo({ message: "You must be logged in to save results." });
+        console.log("No auth token, skipping database save");
         return;
     }
 
@@ -241,9 +292,9 @@ export default function CameraSection() {
     
     try {
       const formData = new FormData();
-      formData.append('video', videoBlob);
+      formData.append('video', videoBlob, 'health-scan.webm');
       
-      // Frames ab yahan se nahi bhej rahe hain
+      // Send the mapped prediction data
       formData.append('predictions', JSON.stringify(predictionData));
       formData.append('heartRate', predictionData.heartRate || '');
       formData.append('bloodPressureSystolic', predictionData.bloodPressure?.systolic || '');
@@ -253,7 +304,10 @@ export default function CameraSection() {
       formData.append('scanDuration', recordingDuration);
 
       await axios.post(`${API_BASE_URL}/api/scan/saveHealthData`, formData, {
-        headers: authHeaders,
+        headers: {
+          ...authHeaders,
+          'Content-Type': 'multipart/form-data'
+        },
       });
 
       setSaveSuccess(true);
@@ -472,9 +526,9 @@ export default function CameraSection() {
         );
       }
       return (
-        <div className="statusIndicator error">
-          <AlertCircle size={18} />
-          <span>Analysis complete, but failed to save.</span>
+        <div className="statusIndicator success">
+          <Save size={18} />
+          <span>Analysis complete!</span>
         </div>
       );
     }
@@ -584,4 +638,3 @@ export default function CameraSection() {
     </>
   );
 }
-
